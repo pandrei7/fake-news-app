@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ro">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+  <!-- Add Icon somewhere -->
+  <title>Știri false</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+
+<body>
+  <header>
+    <h1>Tenis cu P</h1>
+  </header>
+
+  <main>
+    <div id="article-pane">
+
+      <div>
+        <form method="post">
+          <label for="article-title">Title</label>
+          <input name="article-title" id="article-title" value="{{ article.title }}">
+
+          <label for="article-body">Article Body</label>
+          <textarea rows="5" cols="50" name="article-body" id="article-body">{{ article.body }}</textarea>
+
+          <input type="submit">
+        </form>
+      </div>
+    </div>
+
+    <div id="results-pane">
+      <ol>
+        {% for key, prob in prediction.probs.items() %}
+        <li>{{ key }}: {{ prob }}</li>
+        {% endfor %}
+      </ol>
+    </div>
+  </main>
+</body>
+
+</html>
