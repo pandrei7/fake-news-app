@@ -1,24 +1,25 @@
+from threading import Lock, Thread
+
 from flask import Flask, render_template, request
 
-from inter import Article, Model, Prediction
+from models import Article, BertBasedModel, Model, Prediction
 
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 
+model_mutex = Lock()
+
+
 def get_model() -> Model:
-    #  TODO: Write the real implementation.
-    class KKTEMP(Model):
-        def predict(self, article: Article) -> Prediction:
-            return Prediction(
-                {
-                    "real": 1.0 if "hop" in article.body else 0.0,
-                    "fake": 1.0 if "hip" in article.body else 0.0,
-                }
-            )
+    def instantiate_model() -> Model:
+        model = BertBasedModel()
+        return model
 
     if "model" not in get_model.__dict__:
-        get_model.model = KKTEMP()
+        with model_mutex:
+            if "model" not in get_model.__dict__:
+                get_model.model = instantiate_model()
     return get_model.model
 
 
@@ -49,4 +50,9 @@ def predict():
 
 
 if __name__ == "__main__":
+    # Loading the model can take a long time. Pre-load it in a separate thread.
+    model_preloader = Thread(target=get_model)
+    model_preloader.start()
+
     app.run(host="0.0.0.0", port=8080)
+    model_preloader.join()

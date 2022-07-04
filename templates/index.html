@@ -5,41 +5,68 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>Identifică Știrile False</title>
 
-  <!-- Add Icon somewhere -->
-  <title>Știri false</title>
-
+  <link rel="icon" href="img/icon.jpg">
   <link rel="stylesheet" href="style.css">
 </head>
 
-
 <body>
   <header>
-    <h1>Tenis cu P</h1>
+    <h1>Identifică Știrile False</h1>
+
+    <div class="help-paragraph">
+      <h2 class="help-header">Despre site</h2>
+      <p class="help-content">Această aplicație te ajută să analizezi articole scrise în limba română 🇷🇴, cu precădere
+        cele scrise despre COVID-19.</p>
+    </div>
+
+    <div class="help-paragraph">
+      <h2 class="help-header">Instrucțiuni</h2>
+      <p class="help-content">Copiază titlul și conținutul articolului în casetele de mai jos și pornește analiza. Vei
+        vedea probabilitatea ca articolul să aibă un anumit tip sau să abordeze un anume subiect.</p>
+    </div>
   </header>
 
   <main>
     <div id="article-pane">
+      <h2>Alege un articol</h2>
 
-      <div>
-        <form method="post">
-          <label for="article-title">Title</label>
-          <input name="article-title" id="article-title" value="{{ article.title }}">
+      <form method="post" id="article-form">
+        <label for="article-title">Titlu (opțional)</label>
+        <input type="text" name="article-title" id="article-title" value="{{ article.title }}">
 
-          <label for="article-body">Article Body</label>
-          <textarea rows="5" cols="50" name="article-body" id="article-body">{{ article.body }}</textarea>
+        <label id="article-body-label" for="article-body">Conținutul articolului</label>
+        <textarea rows="20" cols="50" name="article-body" id="article-body">{{ article.body }}</textarea>
 
-          <input type="submit">
-        </form>
-      </div>
+        <input type="submit" value="Analizează articolul">
+      </form>
     </div>
 
     <div id="results-pane">
-      <ol>
-        {% for key, prob in prediction.probs.items() %}
-        <li>{{ key }}: {{ prob }}</li>
+      <h2>Rezultate</h2>
+
+      <h3>Tipul articolului</h3>
+      <div id="label-probs" class="probs-table">
+        {% for key, prob in prediction.label_probs|dictsort(by='value', reverse=true) %}
+        <div class="label-name">{{ key }}</div>
+        <div class="label-prob">{{ (prob*100)|int }}%</div>
+        <div class="label-meter">
+          <progress value="{{ prob }}" max="1">{{ (prob*100)|int }}</progress>
+        </div>
         {% endfor %}
-      </ol>
+      </div>
+
+      <h3>Subiecte abordate</h3>
+      <div id="category-probs" class="probs-table">
+        {% for key, prob in prediction.category_probs|dictsort %}
+        <div class="label-name">#{{ key }}</div>
+        <div class="label-prob">{{ (prob*100)|int }}%</div>
+        <div class="label-meter">
+          <progress value="{{ prob }}" max="1">{{ prob }}</progress>
+        </div>
+        {% endfor %}
+      </div>
     </div>
   </main>
 </body>
