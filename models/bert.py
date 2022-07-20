@@ -1,17 +1,14 @@
-from pathlib import Path
-
+from huggingface_hub import from_pretrained_keras
 import numpy as np
-import tensorflow as tf
 import transformers
-from transformers import AutoTokenizer, TFAutoModel
+from transformers import AutoTokenizer
 
 from .inter import Article, Model, Prediction
 
 
 class BertBasedModel(Model):
     TOKENIZER_CHECKPOINT = "readerbench/RoBERT-base"
-    BERT_CHECKPOINT = Path(__file__).parent.parent / "bert" / "hf"
-    TF_MODEL_PATH = Path(__file__).parent.parent / "bert" / "model.h5"
+    MODEL_CHECKPOINT = "pandrei7/fakenews-mtl"
 
     MAX_LENGTH = 512
 
@@ -21,17 +18,7 @@ class BertBasedModel(Model):
         self.tokenizer = AutoTokenizer.from_pretrained(
             BertBasedModel.TOKENIZER_CHECKPOINT
         )
-        self.bert = TFAutoModel.from_pretrained(BertBasedModel.BERT_CHECKPOINT)
-
-        self.model = tf.keras.models.load_model(
-            BertBasedModel.TF_MODEL_PATH,
-            custom_objects={
-                "TFBertModel": self.bert,
-            },
-            # Only load the model for prediction. We cannot load the model
-            # without this option, because we miss a custom loss function.
-            compile=False,
-        )
+        self.model = from_pretrained_keras(BertBasedModel.MODEL_CHECKPOINT)
 
     def predict(self, article: Article) -> Prediction:
         tokens = self.prepare_inputs(article)
