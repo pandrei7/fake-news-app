@@ -46,3 +46,7 @@ python3 main.py
 ```
 
 Open your browser and access `localhost:8080`.
+
+## License
+
+This project is licensed under the terms of [the MIT license](./LICENSE.txt).
