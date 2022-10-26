@@ -47,6 +47,11 @@ python3 main.py
 
 Open your browser and access `localhost:8080`.
 
+## Contributing
+
+This project welcomes contributions of many kinds. See [the contributing
+guide](./CONTRIBUTING.md) to find out more.
+
 ## License
 
 This project is licensed under the terms of [the MIT license](./LICENSE.txt).
